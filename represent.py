@@ -1,5 +1,6 @@
 import requests, json
 
+url_bill = "https://www.govtrack.us/api/v2/bill?"
 url_person_by_id = "https://www.govtrack.us/api/v2/person/"
 url_person = "https://www.govtrack.us/api/v2/person?q="
 
@@ -22,10 +23,35 @@ def get_person(name):
     j = r.json()
     return j
 
+def get_bill(branch, number, congress):
+    """Get a bill from specificications
+    
+    Bill type could also be bill_type_label
+    https://www.govtrack.us/api/v2/bill?number=1349
+        &bill_type=senate_bill&congress=103
 
-if __name__ == "__main__":
+    Attributes:
+    branch - house or senate
+    number - bill number
+    congress - congress number
+    """
+    url = (url_bill + "bill_type=" + branch + "&number="
+           + number + "&congress=" + congress)
+    r = requests.get(url)
+    j = r.json()
+    return j # maybe this should return the first objects[0]?
+
+
+def test_bill():
+    """Get bill takes branch, number, congress"""
+    b = get_bill("senate_bill", "1349", "103")
+    # This should return a single bill
+    bill = b['objects'][0]
+    print(bill['title'])
+        
+
+def test_person():
     """Search by a name, and then list possible reps"""
-    #p = get_person("brian") # There are seven
     p = get_person("kaine")  # There is one
     count = int(p['meta']['total_count'])
     if count > 1:
@@ -37,5 +63,9 @@ if __name__ == "__main__":
             perso = p['objects'][x]
             print(x+1, perso['name'], perso['id'])
     else:
-        print(p['objects'][0]['name'])
+        print(p['objects'][0]['name'])    
+
+
         
+if __name__ == "__main__":
+    test_bill()

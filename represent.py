@@ -1,12 +1,20 @@
+"""
+A small, perhaps useless Python 3 wrapper
+for the Govtrack.us API
+
+Fenimore Love 2016
+ MIT
+"""
 import requests, json
 
 url_bill = "https://www.govtrack.us/api/v2/bill?"
 url_person_by_id = "https://www.govtrack.us/api/v2/person/"
 url_person = "https://www.govtrack.us/api/v2/person?q="
 url_votes = "https://www.govtrack.us/api/v2/vote_voter/?person="
+# Recent votes automatically limit 100, change limit up to 5999
+url_person_recent_votes = "https://www.govtrack.us/api/v2/vote_voter/?order_by=-created&person="
 
-
-warner_id = "412321"
+warner_id = "412321" # PS: I'm from virginia...
 kaine_id = "412582"
 
 def get_votes_by_person_id(person_id):
@@ -52,6 +60,21 @@ def get_bill_title_by_id(bill_id):
     j = requests.get(url).json()  
     return j['title']
 
+def get_recent_votes(person):
+    url = url_person_recent_votes + person
+    j = requests.get(url).json()
+    return j['objects'] # list of dicts
+
+def get_recent_votes_titled(person):
+    url = url_person_recent_votes + person
+    j = requests.get(url).json()
+    votes = j['objects']
+    for x in votes:
+        print(x['option']['value'], ": ", x['vote']['question'])
+        print('Related Bill ID: ', x['vote']['related_bill'], " | ",
+              x['vote']['result'])
+        print("----")
+
 def test_votes():
     v = get_votes_by_person_id("412582")
     #print(type(v['objects'][0]))
@@ -63,7 +86,9 @@ def test_votes():
         #print(x['value']
 
 def test_bill():
-    """Get bill takes branch, number, congress"""
+    """Get bill takes branch, number, congress
+    fast-track is : 
+    """
     b = get_bill("senate_bill", "1349", "103")
     # This should return a single bill
     bill = b['objects'][0]

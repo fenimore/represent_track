@@ -20,14 +20,11 @@ def get_person(name):
     r = requests.get(url)
     # json parsed is a dict type
     j = r.json()
-    # In meta, total count means
-    # that there have been that many matches
-    # In 'kaines' case, that is only one
-    # Brian is 7...
     return j
 
 
 if __name__ == "__main__":
+    """Search by a name, and then list possible reps"""
     #p = get_person("brian") # There are seven
     p = get_person("kaine")  # There is one
     count = int(p['meta']['total_count'])

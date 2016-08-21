@@ -28,7 +28,8 @@ def get_person(name):
 
 
 if __name__ == "__main__":
-    p = get_person("brian")
+    #p = get_person("brian") # There are seven
+    p = get_person("kaine")  # There is one
     count = int(p['meta']['total_count'])
     if count > 1:
         print('There are ', count, ' in total')
@@ -38,3 +39,6 @@ if __name__ == "__main__":
             # Did you mean
             perso = p['objects'][x]
             print(x+1, perso['name'], perso['id'])
+    else:
+        print(p['objects'][0]['name'])
+        
